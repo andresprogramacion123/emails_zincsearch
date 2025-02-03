@@ -1,0 +1,90 @@
+{
+  "name": "julian_emails",
+  "storage_type": "disk",
+  "shard_num": 3,
+  "mappings": {
+    "properties": {
+      "@timestamp": {
+        "type": "date",
+        "index": true,
+        "store": false,
+        "sortable": true,
+        "aggregatable": true,
+        "highlightable": true
+      },
+      "_id": {
+        "type": "keyword",
+        "index": true,
+        "store": false,
+        "sortable": true,
+        "aggregatable": true,
+        "highlightable": true
+      },
+      "from": {
+        "type": "text",
+        "index": true,
+        "store": false,
+        "sortable": false,
+        "aggregatable": false,
+        "highlightable": true
+      },
+      "to": {
+        "type": "text",
+        "index": true,
+        "store": false,
+        "sortable": false,
+        "aggregatable": false,
+        "highlightable": true
+      },
+      "subject": {
+        "type": "text",
+        "index": true,
+        "store": false,
+        "sortable": false,
+        "aggregatable": false,
+        "highlightable": true
+      },
+      "content": {
+        "type": "text",
+        "index": true,
+        "store": false,
+        "sortable": false,
+        "aggregatable": false,
+        "highlightable": true
+      },
+      "message_id": {
+        "type": "text",
+        "index": true,
+        "store": false,
+        "sortable": false,
+        "aggregatable": false,
+        "highlightable": true
+      },
+      "date": {
+        "type": "text",
+        "index": true,
+        "store": false,
+        "sortable": false,
+        "aggregatable": false,
+        "highlightable": true
+      },
+      "content_type": {
+        "type": "text",
+        "index": true,
+        "store": false,
+        "sortable": false,
+        "aggregatable": false,
+        "highlightable": true
+      },
+      "of_folder": {
+        "type": "keyword",
+        "index": true,
+        "store": true,
+        "sortable": false,
+        "aggregatable": true,
+        "highlightable": false
+      }
+    }
+  }
+}
+

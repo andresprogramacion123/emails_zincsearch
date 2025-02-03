@@ -1,0 +1,11 @@
+# Ignorar el archivo .tgz de Enron dentro de indexer
+indexer/enron_mail_20110402.tgz
+
+# Ignorar toda la carpeta enron dentro de indexer
+indexer/enron_mail_20110402/
+
+# Ignorar todo el contenido de la carpeta data, pero asegurarse de que la carpeta vacía se suba
+data/*
+!.gitkeep
+
+.env
