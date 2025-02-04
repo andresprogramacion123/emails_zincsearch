@@ -34,3 +34,18 @@ go tool pprof -top mem_profile.prof
 go tool pprof -svg mem_profile.prof > mem_profile.svg
 go tool pprof -http=:8090 cpu_profile.prof
 
+Despkiegue:
+
+Conexion ssh
+ssh -i clave-julian.pem ubuntu@3.83.80.213
+
+Instalar docker
+
+Clonar repo
+
+dar permiso a data
+
+crear variables de entorno
+
+Cambiar fecth en cliente
+
