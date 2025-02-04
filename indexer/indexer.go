@@ -175,7 +175,7 @@ func main() {
 	wg.Wait()
 	
 	// Define el tamaño del lote que funciona bien en tu máquina
-	const batchSize = 5000 
+	const batchSize = 100 
 	sendBulkToZincSearch(records, batchSize)
 
 	duration := time.Since(startTime)

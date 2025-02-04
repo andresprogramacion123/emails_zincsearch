@@ -5,7 +5,6 @@ indexer/enron_mail_20110402.tgz
 indexer/enron_mail_20110402/
 
 # Ignorar todo el contenido de la carpeta data, pero asegurarse de que la carpeta vacía se suba
-data/*
 !.gitkeep
 
 .env
