@@ -12,7 +12,8 @@ const pageSize = ref(20);
 const currentPage = ref(1);
 const searched = ref(false);
 const loading = ref(false);
-const url = "http://127.0.0.1:8080";
+const url = import.meta.env.VITE_API_URL;
+console.log("API URL:", import.meta.env.VITE_API_URL);
 
 let controller: AbortController | null = null;
 

@@ -201,7 +201,7 @@ func createIndexerFromJsonFile(filepath string) (IndexerData, error) {
 }
 
 func deleteIndexOnZincSearch(indexName string) error {
-	zincHost := os.Getenv("ZINC_HOST")
+	zincHost := os.Getenv("HOST")
 	req, err := http.NewRequest("DELETE", fmt.Sprintf("http://%s:4080/api/index/%s", zincHost, indexName), nil)
 	if err != nil {
 		return err
@@ -232,7 +232,7 @@ func createIndexOnZincSearch(indexerData IndexerData) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	zincHost := os.Getenv("ZINC_HOST")
+	zincHost := os.Getenv("HOST")
 	req, err := http.NewRequest("POST", fmt.Sprintf("http://%s:4080/api/index", zincHost), bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Fatal(err)
@@ -367,7 +367,7 @@ func sendBulkToZincSearch(records []EmailData, batchSize int) {
             return
         }
 
-		zincHost := os.Getenv("ZINC_HOST")
+		zincHost := os.Getenv("HOST")
         req, err := http.NewRequest("POST", fmt.Sprintf("http://%s:4080/api/_bulkv2", zincHost), bytes.NewReader(jsonData))
         if err != nil {
             log.Println(err)

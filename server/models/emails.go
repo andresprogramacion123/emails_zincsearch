@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
 
 type EmailSearchResult struct {
@@ -45,7 +46,7 @@ type ApiResponse struct {
 	Emails []Email `json:"emails"`
 }
 
-//Creemos que debemos cambiar nombre de emails ¿? (Variable de entorno)
+//(Variable de entorno)
 var (
 	apiEndpoint = "http://zincsearch:4080/api/julian_emails/_search"
 	httpClient  = &http.Client{}
@@ -84,7 +85,6 @@ func GetEmails(s string) (ApiResponse, error) {
 		log.Println(err)
 		return apiResponse, err
 	}
-
 	req, err := http.NewRequest("POST", apiEndpoint, bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Println(err)
@@ -93,15 +93,17 @@ func GetEmails(s string) (ApiResponse, error) {
 
 	req.Header.Set("Content-Type", "application/json")
 	//Variable de entorno
-	req.SetBasicAuth("admin", "password")
+	zincUser := os.Getenv("ZINC_USER")
+	zincPassword := os.Getenv("ZINC_PASSWORD")
+	req.SetBasicAuth(zincUser, zincPassword)
 
 	resp, err := httpClient.Do(req)
+	
 	if err != nil {
 		log.Println(err)
 		return apiResponse, err
 	}
 	defer resp.Body.Close()
-
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)

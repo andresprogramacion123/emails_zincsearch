@@ -7,7 +7,7 @@ services:
       - ZINC_DATA_PATH=/data
       - ZINC_FIRST_ADMIN_USER=${ZINC_USER}
       - ZINC_FIRST_ADMIN_PASSWORD=${ZINC_PASSWORD}
-      - ZINC_SERVER_ADDRESS=${ZINC_HOST}
+      - ZINC_SERVER_ADDRESS=${HOST}
     ports:
       - '4080:4080'
     
@@ -15,6 +15,10 @@ services:
     build: ./server
     depends_on:
       - zincsearch
+    environment:
+      - HOST=${HOST}
+      - ZINC_USER=${ZINC_USER}
+      - ZINC_PASSWORD=${ZINC_PASSWORD}
     ports:
       - '8080:8080'
 
@@ -22,6 +26,8 @@ services:
     build: ./client
     depends_on:
       - server
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
     ports:
       - '5173:5173'
 
