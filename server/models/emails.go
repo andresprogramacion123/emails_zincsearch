@@ -1,4 +1,3 @@
-//Aca estan los endpoints y variables de entorno, es posible que requiera modificacion y adaptacion a nuestro caso
 package models
 
 import (
@@ -46,7 +45,7 @@ type ApiResponse struct {
 	Emails []Email `json:"emails"`
 }
 
-//(Variable de entorno)
+//Variable de entorno
 var (
 	apiEndpoint = "http://zincsearch:4080/api/julian_emails/_search"
 	httpClient  = &http.Client{}

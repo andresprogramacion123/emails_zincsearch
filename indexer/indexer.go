@@ -13,11 +13,11 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"runtime/pprof" // 🛠️ Importar pprof para profiling
+	"runtime/pprof" //para profiling
 	"bufio"
 )
 
-// 📌 Archivo donde se guardará el profiling
+//Archivo donde se guardará el profiling
 var cpuProfile = "./indexer/cpu_profile.prof"
 var memProfile = "./indexer/mem_profile.prof"
 
@@ -57,7 +57,7 @@ type IndexerData struct {
 	MappingField Mapping `json:"mappings"`
 }
 
-// Cargar variables de entorno desde un archivo .env
+// Cargar variables de entorno desde archivo .env
 func loadEnvFile(filepath string) {
 	file, err := os.Open(filepath)
 	if err != nil {
@@ -101,7 +101,7 @@ func main() {
 	// Cargar variables de entorno desde el archivo .env
 	loadEnvFile(".env")
 
-	// 🛠️ Habilitar profiling de CPU
+	// Habilitar profiling de CPU
 	f, err := os.Create(cpuProfile)
 	if err != nil {
 		log.Fatal("No se pudo crear el archivo de profiling de CPU:", err)
@@ -109,7 +109,7 @@ func main() {
 	pprof.StartCPUProfile(f)
 	defer pprof.StopCPUProfile()
 
-	// 🛠️ Habilitar profiling de memoria al finalizar
+	// Habilitar profiling de memoria al finalizar
 	defer func() {
 		memFile, err := os.Create(memProfile)
 		if err != nil {
@@ -174,7 +174,7 @@ func main() {
 
 	wg.Wait()
 	
-	// Define el tamaño del lote que funciona bien en tu máquina
+	//Definimos el tamaño del lote que funciona bien 
 	const batchSize = 100 
 	sendBulkToZincSearch(records, batchSize)
 
@@ -264,10 +264,10 @@ func processFile(path string) (EmailData, error) {
 		return EmailData{}, fmt.Errorf("Error leyendo archivo %s: %v", path, err)
 	}
 
-	// 🔹 Extraer el usuario desde la ruta del archivo
+	// Extraer el usuario desde la ruta del archivo
 	userFolder := extractUserFolder(path)
 
-	// 🔹 Limpiar encabezados mal formateados
+	// Limpiar encabezados mal formateados
 	cleanedContent := cleanMalformedHeaders(string(content))
 
 	msg, err := mail.ReadMessage(bytes.NewReader([]byte(cleanedContent)))
@@ -297,16 +297,16 @@ func processFile(path string) (EmailData, error) {
 		MessageID:   messageID,
 		Date:        date,
 		ContentType: contentType,
-		OfFolder:    userFolder, // 🔹 Agregar la carpeta del usuario
+		OfFolder:    userFolder, // Agregar la carpeta del usuario
 	}, nil
 }
 
-// 🔹 Función para extraer la carpeta del usuario desde la ruta
+// Función para extraer la carpeta del usuario desde la ruta
 func extractUserFolder(path string) string {
 	parts := strings.Split(path, string(os.PathSeparator))
 	for i, part := range parts {
 		if part == "maildir" && i+1 < len(parts) {
-			return parts[i+1] // 🔹 Retorna la carpeta inmediatamente después de "maildir"
+			return parts[i+1] // Retorna la carpeta inmediatamente después de "maildir"
 		}
 	}
 	return "unknown" // Si no se encuentra, retorna "unknown"
@@ -321,19 +321,19 @@ func cleanMalformedHeaders(content string) string {
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
 
-		// 🔹 Si es una línea vacía, marca el fin de los encabezados
+		// Si es una línea vacía, marca el fin de los encabezados
 		if trimmed == "" {
 			inHeaders = false
 		}
 
 		if inHeaders {
-			// 🔹 Si la línea NO tiene `:` y NO es la primera línea del email, es parte del encabezado anterior
+			// Si la línea NO tiene `:` y NO es la primera línea del email, es parte del encabezado anterior
 			if !strings.Contains(trimmed, ":") && prevLineIndex != -1 {
 				cleanedLines[prevLineIndex] += " " + trimmed // Agrega el contenido a la línea anterior
 				continue
 			}
 
-			// 🔹 Guardamos el índice de la última línea válida con `:`
+			// Guardamos el índice de la última línea válida con `:`
 			if strings.Contains(trimmed, ":") {
 				prevLineIndex = len(cleanedLines)
 			}
@@ -357,7 +357,7 @@ func sendBulkToZincSearch(records []EmailData, batchSize int) {
 
         batch := records[start:end] // Tomamos el lote de registros
         bulkData := BulkData{
-            Index:   "julian_emails", //Ingresamos nombre de indice en zincsearch (poner como variable variable env)
+            Index:   "julian_emails", //Ingresamos nombre de indice en zincsearch
             Records: batch,
         }
 
