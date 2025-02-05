@@ -102,12 +102,30 @@ Teniendo los datos indexados podemos proceder a visualizarlos en el frontend o e
 
 9) Procedemos a generar graficos de profiling:
 
+```
 go tool pprof -top ./indexer/cpu_profile.prof
+```
+
+```
 go tool pprof -svg ./indexer/cpu_profile.prof > ./indexer/cpu_profile.svg
+```
+
+```
 go tool pprof -top ./indexer/mem_profile.prof
+
+```
+
+```
 go tool pprof -svg ./indexer/mem_profile.prof > ./indexer/mem_profile.svg
+```
+
+```
 go tool pprof -http=:8090 ./indexer/cpu_profile.prof
+```
+
+```
 go tool pprof -http=:8090 ./indexer/mem_profile.prof
+```
 
 10) Despues de que los datos estan indexados podemos finalizar la ejecucion del servicio de zincsearch.
 
