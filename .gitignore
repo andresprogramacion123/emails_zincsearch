@@ -3,10 +3,14 @@ indexer/enron_mail_20110402.tgz
 
 # Ignorar toda la carpeta enron dentro de indexer
 indexer/enron_mail_20110402/
+
+# Ignorar toda la carpeta de backup de indexer
 backup_data
 
 # Ignorar todo el contenido de la carpeta data, pero asegurarse de que la carpeta vacía se suba
 data/*
 !.gitkeep
 
+# Ignorar variables de entorno
 .env
+clave-julian.pem
