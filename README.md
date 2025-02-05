@@ -10,7 +10,7 @@
 
 5) dar permiso a carpeta data: chmod a+rwx ./data
 
-6) Descargar datos (Se demora entre 5 y 10 minutos)
+6) Descargar datos (Se demora entre 5 y 10 minutos) (para desarrollo)
 
 7) Ejecutar con docker compose up --build
 
@@ -18,14 +18,22 @@
 
 8) Ejecutar indexer (sin necesidad de go)
 
-Nota: Analisar si paso 5, 6 y 8 se pueden poner en un archivo.sh y ejecutar desde docker compose, teniendo en cuenta que para que suceda la ejecucion de la base de datos ya se debe dar permiso a la carpeta data (es decir este contenedor nuevo si lo es deberia ser una dependencia del contenedor zincsearch) (Hay un problema si se crea un contenedor todavia no se ha descargado los datos y no sabemos si eso sea un problema es posible que tenga que ver con volumenes), luego para crear el indexer ya se debe ejecutar el descargador de datos y la base de datos ya debe estar instalada
+./indexer/indexer
+
+Con go
+
 Instalar go
 https://wiki.crowncloud.net/?How_To_Install_Go_on_Ubuntu_24_04
 
 go build -o indexer ./indexer/indexer.go
 
-#Analizar profiling
+Despues de que los datos estan indexados podemos finalizar la ejecucion del servicio de zincsearch.
 
+Generar un backup
+
+Este backup es necesario para produccion
+
+#Analizar profiling
 
 go tool pprof -top cpu_profile.prof
 go tool pprof cpu_profile.prof (No es necesario)
@@ -34,7 +42,7 @@ go tool pprof -top mem_profile.prof
 go tool pprof -svg mem_profile.prof > mem_profile.svg
 go tool pprof -http=:8090 cpu_profile.prof
 
-Despkiegue:
+Despliegue:
 
 Conexion ssh
 ssh -i clave-julian.pem ubuntu@3.83.80.213
@@ -47,5 +55,8 @@ dar permiso a data
 
 crear variables de entorno
 
-Cambiar fecth en cliente
+Crear .env en cliente y cambiar fecth en cliente
+
+Copiar backup en data
+scp -i clave-julian.pem -r backup_data/ ubuntu@52.91.213.148:/home/ubuntu/
 
