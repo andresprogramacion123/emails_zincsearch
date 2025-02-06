@@ -130,7 +130,14 @@ go tool pprof -http=:8090 ./indexer/mem_profile.prof
 10) Despues de que los datos estan indexados podemos finalizar la ejecucion del servicio de zincsearch.
 
 11) Generar un backup: Este backup es necesario para produccion (Vamos aca)
-Falta escribir...
+
+sudo chmod -R 777 ./data
+mkdir ./backup_data
+sudo rsync -a ./data/ ./backup_data/
+sudo rsync -av --progress -e "ssh -i ./clave-julian.pem" --rsync-path="mkdir -p /home/ubuntu/code/emails_zincsearch/backup_data1 && rsync" ./backup_data/ ubuntu@52.91.213.148:/home/ubuntu/code/emails_zincsearch/backup_data1/ (copiar backup en servidor)
+scp -i clave-julian.pem -r ./backup_data/ ubuntu@52.91.213.148:/home/ubuntu/ (copiar backup en servidor)
+Verificar que backup en servidor y backup en local sean iguales
+Enviar backup en servidor a carpeta ./data
 
 ## Instrucciones etapa de produccion:
 
