@@ -6,6 +6,54 @@ C.C 1214727927
 
 ## Estructura de proyecto:
 
+```
+.
+├── .env
+├── .gitignore
+├── README.md
+├── client
+│   ├── .dockerignore
+│   ├── .env
+│   ├── .gitignore
+│   ├── .vscode
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── index.html
+│   ├── node_modules
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── pnpm-lock.yaml
+│   ├── postcss.config.js
+│   ├── public
+│   ├── src
+│   ├── tailwind.config.js
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+├── data
+│   ├── .gitkeep
+├── docker-compose.yml
+├── indexer
+│   ├── cpu_profile.prof
+│   ├── cpu_profile.svg
+│   ├── download_data.sh
+│   ├── enron_mail_20110402
+│   ├── enron_mail_20110402.tgz
+│   ├── indexer
+│   ├── indexer.go
+│   ├── julian_indexer.json
+│   ├── mem_profile.prof
+│   └── mem_profile.svg
+└── server
+    ├── Dockerfile
+    ├── controllers
+    ├── go.mod
+    ├── go.sum
+    ├── main.go
+    ├── models
+    └── utils
+```
+
 ## Instrucciones etapa de desarrollo: 
 1) Preferiblemente trabajar en ubuntu 22.04 LTS (Puede utilizar wsl2 en windows para instalar ubuntu)
 
@@ -89,7 +137,6 @@ Ejecutar el compilador:
 
 ```
 ./indexer/indexer
-
 ```
 
 * Si solo desea ejecutar el indice ya establecido
@@ -129,33 +176,69 @@ go tool pprof -http=:8090 ./indexer/mem_profile.prof
 
 10) Despues de que los datos estan indexados podemos finalizar la ejecucion del servicio de zincsearch.
 
-11) Generar un backup: Este backup es necesario para produccion (Vamos aca)
+11) Generar un backup: Este backup es necesario para produccion
 
+```
 sudo chmod -R 777 ./data
+```
+
+```
 mkdir ./backup_data
+```
+
+```
 sudo rsync -a ./data/ ./backup_data/
-sudo rsync -av --progress -e "ssh -i ./clave-julian.pem" --rsync-path="mkdir -p /home/ubuntu/code/emails_zincsearch/backup_data1 && rsync" ./backup_data/ ubuntu@52.91.213.148:/home/ubuntu/code/emails_zincsearch/backup_data1/ (copiar backup en servidor)
-scp -i clave-julian.pem -r ./backup_data/ ubuntu@52.91.213.148:/home/ubuntu/ (copiar backup en servidor)
-Verificar que backup en servidor y backup en local sean iguales
-Enviar backup en servidor a carpeta ./data
+```
 
 ## Instrucciones etapa de produccion:
 
-Adquirir un servidor de ec2.
+1) Adquirir un servidor de EC2 en AWS preferiblemente con ubuntu 22.04 LTS.
 
-Conexion ssh
+2) Establecer la seguridad en las reglas de entrada con los puertos
+
+3) Conexion ssh: Conectarse al servidor via ssh utilizando la respectiva clave e ip del servidor
+
+```
 ssh -i clave-julian.pem ubuntu@52.91.213.148
+```
 
-Instalar docker
+4) Instalar Docker y Docker compose como vimos anteriormente
 
-Clonar repo
+5) Creamos carpeta code e ingresamos
 
-dar permiso a data
+```
+mkdir code
+```
 
-crear variables de entorno
+```
+cd code
+```
 
-Crear .env en cliente y cambiar fecth en cliente
+5) Clonamos repositorio como vimos anteriormente
 
-Copiar backup en data
-scp -i clave-julian.pem -r backup_data/ ubuntu@52.91.213.148:/home/ubuntu/
+6) Creamos variables de entorno para backend y frontend
+
+Crear .env en cliente y cambiar VITE_API_URL
+
+7) Damos permiso a carpeta ./data como vimos anteriormente
+
+8) Copiar backup que hay en local a servidor y luego de servidor a carpeta data
+
+Nota: Podemos intentar copiar directamente en carpeta data
+
+```
+sudo rsync -av --progress -e "ssh -i ./clave-julian.pem" --rsync-path="mkdir -p /home/ubuntu/code/emails_zincsearch/backup_data1 && rsync" ./backup_data/ ubuntu@52.91.213.148:/home/ubuntu/code/emails_zincsearch/backup_data1/ (copiar backup en servidor)
+```
+
+```
+scp -i clave-julian.pem -r ./backup_data/ ubuntu@52.91.213.148:/home/ubuntu/ (copiar backup en servidor)
+```
+
+Verificar que backup en servidor y backup en local sean iguales (Muy importante)
+
+Enviar backup en servidor a carpeta ./data (Si no se copia en carpeta data al inicio)
+
+Verficiar que tanto backup en servidor como carpeta data sean iguales
+
+9) Podemos ejecutar servicios con docker compose 
 
