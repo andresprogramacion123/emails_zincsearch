@@ -40,7 +40,7 @@ services:
     build: ./server
     container_name: backend
     depends_on:
-      - zincsearch_db
+      - zincsearch
     environment:
       - HOST=${HOST}
       - ZINC_USER=${ZINC_USER}
@@ -76,8 +76,8 @@ services:
     container_name: frontend
     restart: always
     depends_on:
-      - backend
-      - zincsearch_db
+      - server
+      - zincsearch
     environment:
       - VITE_API_URL=${VITE_API_URL}
     labels:
