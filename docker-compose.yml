@@ -1,6 +1,8 @@
 services:
   zincsearch:
     image: public.ecr.aws/zinclabs/zincsearch:latest
+    container_name: zincsearch_db
+    restart: always
     volumes:
       - ./data:/data
     environment:
@@ -8,26 +10,106 @@ services:
       - ZINC_FIRST_ADMIN_USER=${ZINC_USER}
       - ZINC_FIRST_ADMIN_PASSWORD=${ZINC_PASSWORD}
       - ZINC_SERVER_ADDRESS=${HOST}
+    labels:
+      # Enable Traefik for this specific "backend" service
+      - traefik.enable=true
+      # Define the port inside of the Docker service to use
+      - traefik.http.services.zincsearch.loadbalancer.server.port=4080
+      # Make Traefik use this domain in HTTP
+      - traefik.http.routers.zincsearch-http.entrypoints=http
+      - traefik.http.routers.zincsearch-http.rule=Host(`zincsearch.52.91.213.148`)
+      # Use the traefik-public network (declared below)
+      - traefik.docker.network=traefik-public
+      # Make Traefik use this domain in HTTPS
+      - traefik.http.routers.zincsearch-https.entrypoints=https
+      - traefik.http.routers.zincsearch-https.rule=Host(`zincsearch.52.91.213.148`)
+      - traefik.http.routers.zincsearch-https.tls=true
+      # Use the "le" (Let's Encrypt) resolver
+      - traefik.http.routers.zincsearch-https.tls.certresolver=le
+      # Middleware to redirect HTTP to HTTPS
+      - traefik.http.routers.zincsearch-http.middlewares=https-redirect
+    networks:
+      # Use the public network created to be shared between Traefik and
+      # any other service that needs to be publicly available with HTTPS
+      - traefik-public
+      - default
     ports:
       - '4080:4080'
     
   server:
     build: ./server
+    container_name: backend
     depends_on:
-      - zincsearch
+      - zincsearch_db
     environment:
       - HOST=${HOST}
       - ZINC_USER=${ZINC_USER}
       - ZINC_PASSWORD=${ZINC_PASSWORD}
+    labels:
+      # Enable Traefik for this specific "backend" service
+      - traefik.enable=true
+      # Define the port inside of the Docker service to use
+      - traefik.http.services.backend.loadbalancer.server.port=8080
+      # Make Traefik use this domain in HTTP
+      - traefik.http.routers.backend-http.entrypoints=http
+      - traefik.http.routers.backend-http.rule=Host(`backend.52.91.213.148`)
+      # Use the traefik-public network (declared below)
+      - traefik.docker.network=traefik-public
+      # Make Traefik use this domain in HTTPS
+      - traefik.http.routers.backend-https.entrypoints=https
+      - traefik.http.routers.backend-https.rule=Host(`backend.52.91.213.148`)
+      - traefik.http.routers.backend-https.tls=true
+      # Use the "le" (Let's Encrypt) resolver
+      - traefik.http.routers.backend-https.tls.certresolver=le
+      # Middleware to redirect HTTP to HTTPS
+      - traefik.http.routers.backend-http.middlewares=https-redirect
+    networks:
+      # Use the public network created to be shared between Traefik and
+      # any other service that needs to be publicly available with HTTPS
+      - traefik-public
+      - default
     ports:
       - '8080:8080'
 
   client:
     build: ./client
+    container_name: frontend
+    restart: always
     depends_on:
-      - server
+      - backend
+      - zincsearch_db
     environment:
       - VITE_API_URL=${VITE_API_URL}
+    labels:
+      # Enable Traefik for this specific "backend" service
+      - traefik.enable=true
+      # Define the port inside of the Docker service to use
+      - traefik.http.services.frontend.loadbalancer.server.port=5173
+      # Make Traefik use this domain in HTTP
+      - traefik.http.routers.frontend-http.entrypoints=http
+      - traefik.http.routers.frontend-http.rule=Host(`52.91.213.148`)
+      # Use the traefik-public network (declared below)
+      - traefik.docker.network=traefik-public
+      # Make Traefik use this domain in HTTPS
+      - traefik.http.routers.frontend-https.entrypoints=https
+      - traefik.http.routers.frontend-https.rule=Host(`52.91.213.148`)
+      - traefik.http.routers.frontend-https.tls=true
+      # Use the "le" (Let's Encrypt) resolver
+      - traefik.http.routers.frontend-https.tls.certresolver=le
+      # https-redirect middleware to redirect HTTP to HTTPS
+      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+      # Middleware to redirect HTTP to HTTPS
+      - traefik.http.routers.frontend-http.middlewares=https-redirect
+    networks:
+      # Use the public network created to be shared between Traefik and
+      # any other service that needs to be publicly available with HTTPS
+      - traefik-public
+      - default
     ports:
       - '5173:5173'
 
+
+networks:
+  traefik-public:
+    external: true
