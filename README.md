@@ -7,10 +7,12 @@ C.C 1214727927
 ## Estructura de proyecto:
 
 ```
-.
 ├── .env
 ├── .gitignore
 ├── README.md
+├── docker-compose.override.yml
+├── docker-compose.traefik.yml
+├── docker-compose.yml
 ├── client
 │   ├── .dockerignore
 │   ├── .env
@@ -31,8 +33,7 @@ C.C 1214727927
 │   ├── tsconfig.node.json
 │   └── vite.config.ts
 ├── data
-│   ├── .gitkeep
-├── docker-compose.yml
+│   └── .gitkeep
 ├── indexer
 │   ├── cpu_profile.prof
 │   ├── cpu_profile.svg
@@ -145,7 +146,7 @@ Ejecutar el compilador:
 ./indexer/indexer
 ```
 
-Teniendo los datos indexados podemos proceder a visualizarlos en el frontend o el la interfaz grafica de zincsearch de manera local
+Teniendo los datos indexados podemos proceder a visualizarlos en el frontend o en la interfaz grafica de zincsearch de manera local
 
 9) Procedemos a generar graficos de profiling:
 
@@ -176,7 +177,7 @@ go tool pprof -http=:8090 ./indexer/mem_profile.prof
 
 10) Despues de que los datos estan indexados podemos finalizar la ejecucion del servicio de zincsearch.
 
-11) Generar un backup: Este backup es necesario para produccion
+11) Generar un backup: Este backup es necesario para produccion.
 
 ```
 sudo chmod -R 777 ./data
@@ -190,7 +191,7 @@ mkdir ./backup_data
 sudo rsync -a ./data/ ./backup_data/
 ```
 
-## Instrucciones etapa de produccion:
+## Instrucciones etapa de producción:
 
 1) Adquirir un servidor de EC2 en AWS preferiblemente con ubuntu 22.04 LTS.
 
@@ -204,6 +205,12 @@ ssh -i clave-julian.pem ubuntu@52.91.213.148
 
 4) Instalar Docker y Docker compose como vimos anteriormente
 
+5) Instalamos aleatoriedad
+
+```
+sudo apt install haveged
+```
+
 5) Creamos carpeta code e ingresamos
 
 ```
@@ -216,9 +223,7 @@ cd code
 
 5) Clonamos repositorio como vimos anteriormente
 
-6) Creamos variables de entorno para backend y frontend
-
-Crear .env en cliente y cambiar VITE_API_URL
+6) Creamos variables de entorno para backend y frontend. Crear .env en cliente y cambiar VITE_API_URL
 
 7) Damos permiso a carpeta ./data como vimos anteriormente
 
@@ -227,18 +232,35 @@ Crear .env en cliente y cambiar VITE_API_URL
 Nota: Podemos intentar copiar directamente en carpeta data
 
 ```
-sudo rsync -av --progress -e "ssh -i ./clave-julian.pem" --rsync-path="mkdir -p /home/ubuntu/code/emails_zincsearch/backup_data1 && rsync" ./backup_data/ ubuntu@52.91.213.148:/home/ubuntu/code/emails_zincsearch/backup_data1/ (copiar backup en servidor)
-```
-
-```
-scp -i clave-julian.pem -r ./backup_data/ ubuntu@52.91.213.148:/home/ubuntu/ (copiar backup en servidor)
+sudo rsync -av --progress -e "ssh -i ./clave-julian.pem" --rsync-path="mkdir -p /home/ubuntu/code/emails_zincsearch/backup_data && rsync" ./backup_data/ ubuntu@52.91.213.148:/home/ubuntu/code/emails_zincsearch/backup_data/ 
 ```
 
 Verificar que backup en servidor y backup en local sean iguales (Muy importante)
 
 Enviar backup en servidor a carpeta ./data (Si no se copia en carpeta data al inicio)
 
-Verficiar que tanto backup en servidor como carpeta data sean iguales
+```
+mv /home/ubuntu/code/emails_zincsearch/backup/* /home/ubuntu/code/emails_zincsearch/data/
+```
 
-9) Podemos ejecutar servicios con docker compose 
+```
+mv /home/ubuntu/code/emails_zincsearch/backup/.* /home/ubuntu/code/emails_zincsearch/data/
+```
 
+9) Crear red para Docker:
+
+```
+sudo docker network create traefik-public
+```
+
+10) Ejecutamos el siguiente comando para correr el contenedor del proxy traefik:
+
+```
+sudo docker compose -f docker-compose.traefik.yml up --build
+```
+
+9) Podemos ejecutar servicios con docker compose:
+
+```
+sudo docker compose -f docker-compose.yml up --build
+```
