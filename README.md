@@ -1,6 +1,6 @@
 # Prueba tecnica desarrollador de software: Interfaz para buscar informacion de bases de datos de correos
 
-Visita el proyecto en: https://frontend.juliandeveloper.dev/q
+Visita el proyecto en: https://frontend.juliandeveloper.dev/
 
 Por: Julian Andres Montoya Carvajal
 
