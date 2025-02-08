@@ -2,8 +2,6 @@
 
 Por: Julian Andres Montoya Carvajal
 
-C.C 1214727927
-
 ## Estructura de proyecto:
 
 ```
@@ -102,17 +100,11 @@ En caso de ser necesario ejecute antes los siguientes comandos:
 
 ```
 sudo docker compose down
-```
 
-```
 sudo docker compose down -v
-```
 
-```
 sudo docker compose down --rmi all
-```
 
-```
 sudo docker builder prune -a -f
 ```
 
@@ -152,26 +144,15 @@ Teniendo los datos indexados podemos proceder a visualizarlos en el frontend o e
 
 ```
 go tool pprof -top ./indexer/cpu_profile.prof
-```
 
-```
 go tool pprof -svg ./indexer/cpu_profile.prof > ./indexer/cpu_profile.svg
-```
 
-```
 go tool pprof -top ./indexer/mem_profile.prof
 
-```
-
-```
 go tool pprof -svg ./indexer/mem_profile.prof > ./indexer/mem_profile.svg
-```
 
-```
 go tool pprof -http=:8090 ./indexer/cpu_profile.prof
-```
 
-```
 go tool pprof -http=:8090 ./indexer/mem_profile.prof
 ```
 
@@ -181,13 +162,7 @@ go tool pprof -http=:8090 ./indexer/mem_profile.prof
 
 ```
 sudo chmod -R 777 ./data
-```
-
-```
 mkdir ./backup_data
-```
-
-```
 sudo rsync -a ./data/ ./backup_data/
 ```
 
@@ -211,23 +186,20 @@ ssh -i clave-julian.pem ubuntu@52.91.213.148
 sudo apt install haveged
 ```
 
-5) Creamos carpeta code e ingresamos
+6) Creamos carpeta code e ingresamos
 
 ```
 mkdir code
-```
-
-```
 cd code
 ```
 
-5) Clonamos repositorio como vimos anteriormente
+7) Clonamos repositorio como vimos anteriormente
 
-6) Creamos variables de entorno para backend y frontend. Crear .env en cliente y cambiar VITE_API_URL
+7) Creamos variables de entorno para backend y frontend. Crear .env en cliente y cambiar VITE_API_URL
 
-7) Damos permiso a carpeta ./data como vimos anteriormente
+8) Damos permiso a carpeta ./data como vimos anteriormente
 
-8) Copiar backup que hay en local a servidor y luego de servidor a carpeta data
+9) Copiar backup que hay en local a servidor y luego de servidor a carpeta data
 
 Nota: Podemos intentar copiar directamente en carpeta data
 
@@ -241,25 +213,22 @@ Enviar backup en servidor a carpeta ./data (Si no se copia en carpeta data al in
 
 ```
 mv /home/ubuntu/code/emails_zincsearch/backup/* /home/ubuntu/code/emails_zincsearch/data/
-```
-
-```
 mv /home/ubuntu/code/emails_zincsearch/backup/.* /home/ubuntu/code/emails_zincsearch/data/
 ```
 
-9) Crear red para Docker:
+10) Crear red para Docker:
 
 ```
 sudo docker network create traefik-public
 ```
 
-10) Ejecutamos el siguiente comando para correr el contenedor del proxy traefik:
+11) Ejecutamos el siguiente comando para correr el contenedor del proxy traefik:
 
 ```
 sudo docker compose -f docker-compose.traefik.yml up --build
 ```
 
-9) Podemos ejecutar servicios con docker compose:
+12) Podemos ejecutar servicios con docker compose:
 
 ```
 sudo docker compose -f docker-compose.yml up --build
