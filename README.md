@@ -1,5 +1,7 @@
 # Prueba tecnica desarrollador de software: Interfaz para buscar informacion de bases de datos de correos
 
+Visita el proyecto en: https://frontend.juliandeveloper.dev/q
+
 Por: Julian Andres Montoya Carvajal
 
 ## Estructura de proyecto:
@@ -100,11 +102,8 @@ En caso de ser necesario ejecute antes los siguientes comandos:
 
 ```
 sudo docker compose down
-
 sudo docker compose down -v
-
 sudo docker compose down --rmi all
-
 sudo docker builder prune -a -f
 ```
 
@@ -144,15 +143,10 @@ Teniendo los datos indexados podemos proceder a visualizarlos en el frontend o e
 
 ```
 go tool pprof -top ./indexer/cpu_profile.prof
-
 go tool pprof -svg ./indexer/cpu_profile.prof > ./indexer/cpu_profile.svg
-
 go tool pprof -top ./indexer/mem_profile.prof
-
 go tool pprof -svg ./indexer/mem_profile.prof > ./indexer/mem_profile.svg
-
 go tool pprof -http=:8090 ./indexer/cpu_profile.prof
-
 go tool pprof -http=:8090 ./indexer/mem_profile.prof
 ```
 
@@ -175,7 +169,7 @@ sudo rsync -a ./data/ ./backup_data/
 3) Conexion ssh: Conectarse al servidor via ssh utilizando la respectiva clave e ip del servidor
 
 ```
-ssh -i clave-julian.pem ubuntu@52.91.213.148
+ssh -i clavefake.pem ubuntu@ip.fa.ke.00
 ```
 
 4) Instalar Docker y Docker compose como vimos anteriormente
@@ -195,41 +189,38 @@ cd code
 
 7) Clonamos repositorio como vimos anteriormente
 
-7) Creamos variables de entorno para backend y frontend. Crear .env en cliente y cambiar VITE_API_URL
+8) Creamos variables de entorno para backend (models-emails url) y frontend. Crear .env en cliente y cambiar VITE_API_URL
 
-8) Damos permiso a carpeta ./data como vimos anteriormente
+9) Damos permiso a carpeta ./data como vimos anteriormente
 
-9) Copiar backup que hay en local a servidor y luego de servidor a carpeta data
-
-Nota: Podemos intentar copiar directamente en carpeta data
+10) Copiar backup que hay en local a servidor y luego de servidor a carpeta data
 
 ```
-sudo rsync -av --progress -e "ssh -i ./clave-julian.pem" --rsync-path="mkdir -p /home/ubuntu/code/emails_zincsearch/backup_data && rsync" ./backup_data/ ubuntu@52.91.213.148:/home/ubuntu/code/emails_zincsearch/backup_data/ 
+sudo rsync -av --progress -e "ssh -i ./clavefake.pem" --rsync-path="mkdir -p /home/ubuntu/code/emails_zincsearch/backup_data && rsync" ./backup_data/ ubuntu@ip.fa.ke.00:/home/ubuntu/code/emails_zincsearch/backup_data/ 
 ```
 
-Verificar que backup en servidor y backup en local sean iguales (Muy importante)
-
-Enviar backup en servidor a carpeta ./data (Si no se copia en carpeta data al inicio)
+Verificar que backup en servidor y backup en local sean iguales y mover datos a carpeta data de zincsearch
 
 ```
-mv /home/ubuntu/code/emails_zincsearch/backup/* /home/ubuntu/code/emails_zincsearch/data/
-mv /home/ubuntu/code/emails_zincsearch/backup/.* /home/ubuntu/code/emails_zincsearch/data/
+mv /home/ubuntu/code/emails_zincsearch/backup_data/* /home/ubuntu/code/emails_zincsearch/data/
 ```
 
-10) Crear red para Docker:
+11) Crear red para Docker:
 
 ```
 sudo docker network create traefik-public
 ```
 
-11) Ejecutamos el siguiente comando para correr el contenedor del proxy traefik:
+12) Ejecutamos el siguiente comando para correr el contenedor del proxy traefik:
 
 ```
 sudo docker compose -f docker-compose.traefik.yml up --build
 ```
 
-12) Podemos ejecutar servicios con docker compose:
+13) Podemos ejecutar servicios con docker compose:
 
 ```
 sudo docker compose -f docker-compose.yml up --build
 ```
+
+13) Ahora puede consultar la aplicacion en: https://frontend.juliandeveloper.dev/
